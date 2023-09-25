@@ -23,10 +23,10 @@ print(f"URLs to crawl: {count}")
 # iterate over each URL
 for url in urls:
     print(f"\nFetching URL: {url}")
-    continue_prompt = input("Continue? (y/n): ")
 
-    if continue_prompt.lower() != "y":
-        break
+    # continue_prompt = input("Continue? (y/n): ")
+    # if continue_prompt.lower() != "y":
+        # break
         
     # send a GET request to the URL and get the response
     response = requests.get(url)
@@ -195,19 +195,27 @@ for url in urls:
         property_featured_image.extract()
     
 
-
-
-# Find the element with class 'features'
+    # Find the element with class 'features'
     features_element = soup.find(class_='features')
-
-# Find all list items (li) within the features element
+    # Find all list items (li) within the features element
     list_elements = features_element.find_all('li')
-
-# Extract the text value of each list item as a string
+    # Extract the text value of each list item as a string
     values = [li.text.strip() for li in list_elements]
-
-# Create a comma-separated list of the values
+    # Create a comma-separated list of the values
     comma_separated_list = ', '.join(values)
+
+    # find the section with class "features"
+    features = soup.find('div', class_='features')
+    # remove the section if found
+    if features:
+        features.extract()
+
+
+
+    # # Find the catItemHeader element
+    # cat_item_header = soup.find(class_='catItemHeader')
+    # # Extract the full text phrase and assign to a variable
+    # full_text = cat_item_header.text.strip()
 
 
 
@@ -215,6 +223,9 @@ for url in urls:
     # display the fetched HTML content
     print("\nFetched HTML Content:")
     print(soup.prettify())
+#    print("A desc:")
+#    print(full_text)
+    print()
     print("Listing Tags:")
     print(comma_separated_list)
     print()
