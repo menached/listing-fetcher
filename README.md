@@ -7,4 +7,17 @@ Build a list of property listing links from the locally stored real estate agenc
 
 
 # Todo's
-First need an outline for a listing fetcher.
+Load link list located at:
+../link-builder/all-property-links.txt
+
+#run
+    python3 fetch_listings.py
+
+Iterate across using Beautiful Soup
+
+Identify Title, Description, etc.
+
+Store Values in a product record(s).
+Determine how to store vaules.  as a set or individually
+
+
