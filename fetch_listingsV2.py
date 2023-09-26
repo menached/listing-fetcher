@@ -106,8 +106,8 @@ def main():
         
         for sidebar in soup.find_all(class_='sidebar'):
             sidebar.extract()
-
-
+        
+        #issues with this block
         end_main_content_tag = soup.find(text='<!-- End Main Content -->')
         if end_main_content_tag:
             for sibling in end_main_content_tag.find_next_siblings():
@@ -369,6 +369,7 @@ def main():
         bathroom_matches = re.findall(r'\d+(?:\.\d+)?\s*Bathrooms', short_description)
         bathrooms = bathroom_matches[0].split()[0] if bathroom_matches else None  # Extracts the bathroom count component
 
+        #split_meta("m2")
         print("Area:", area)
         print("Bedrooms:", bedrooms)
         print("Bathrooms:", bathrooms)
@@ -392,7 +393,6 @@ def main():
         #metastring = "105  sq. mtrs.2 Bedrooms2.5 Bathrooms"
         #split_meta("105  sq. mtrs.2 Bedrooms2.5 Bathrooms")
         #split_meta(metastring)
-
         print()
         print("ID:", id)
         print("Title:", title)
@@ -433,6 +433,12 @@ def split_meta(metastring):
 
     allthree = (area, " ", bedrooms, " ",  bathrooms)
     #print(metastring)
+    if "m2" in allthree:
+        allthree = "Case1 m2"
+    if "sq. mtrs." in allthree:
+        allthree = "Case2 sq. mtrs."
+    if "m²" in allthree:
+        allthree = "m²"
     return allthree
 
 main()
