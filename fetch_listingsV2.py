@@ -1,5 +1,6 @@
 import pprint
 import re
+import time
 import requests
 from bs4 import BeautifulSoup
 
@@ -34,7 +35,33 @@ for url in urls:
     
     # parse the HTML content of the page using Beautiful Soup
     soup = BeautifulSoup(response.text, 'html.parser')
+    soup2 = BeautifulSoup(response.text, 'html.parser')
+   
+
+    #soup2 stuff
+
+    # remove script tags and their content
+    for script in soup2.find_all('script'):
+        script.extract()
     
+    # Remove all <path> tags from the soup object
+    for path in soup2.find_all('path'):
+        path.decompose()
+
+    # Remove all <svg> tags from the soup object
+    for svg in soup2.find_all('svg'):
+        svg.decompose()
+    
+    for form in soup2.find_all('form'):
+        form.decompose()
+    
+
+    title = soup2.find('h1').text.strip()
+
+
+
+    #soup stuff
+
     # find the section with class "catItemBody"
     printer_icon = soup.find('span', class_='printer-icon')
     # remove the section if found
@@ -65,6 +92,7 @@ for url in urls:
     # remove script tags and their content
     for script in soup.find_all('script'):
         script.extract()
+
      # remove elements with id="footer-bottom"
     for footer_bottom in soup.find_all(id='footer-bottom'):
         footer_bottom.extract()
@@ -79,10 +107,7 @@ for url in urls:
         sidebar.extract()
 
 
-    # find the <!-- End Main Content --> tag
     end_main_content_tag = soup.find(text='<!-- End Main Content -->')
-
-    # remove all siblings of the <!-- End Main Content --> tag
     if end_main_content_tag:
         for sibling in end_main_content_tag.find_next_siblings():
             sibling.extract()
@@ -157,7 +182,10 @@ for url in urls:
     #if property_meta:
     #    property_meta.extract()
 
-
+    descriptive_text = soup.find("div", class_="content clearfix").get_text()
+    descriptive_text = descriptive_text.replace("Check Our Facebook Page!", "")
+    descriptive_text = descriptive_text.replace("Subscribe to our YouTube page for the latest information!", "")
+    descriptive_text = descriptive_text.strip()
 
     # find the section with class "page-head"
     page_head = soup.find('div', class_='page-head')
@@ -252,8 +280,8 @@ for url in urls:
     if features:
         features.extract()
     
-    title = soup.find('h4', class_='title')
-    title_text = title.get_text().strip().replace("Property ID :", "")
+    id_text = soup.find('h4', class_='title')
+    id = id_text.get_text().strip().replace("Property ID :", "")
 
     price = soup.find('h5', class_='price')
     price_text = price
@@ -284,26 +312,32 @@ for url in urls:
 
 
 
-
+    #description = soup.find('div', class_='catItemHeader').text.strip()
+    #print(description)
 
 
     # display the fetched HTML content
     print("\nFetched HTML Content:")
-    print(soup.prettify())
+    print(soup2.prettify())
 #   
    # print("Desc:")
    # print(full_text)
     print()
-    print("Property ID:", title_text)
+    print("Property ID:", id)
+    print("Title:", title)
     print("Category:", category)
     print("Listing Tags:", comma_separated_list)
     print("Details:", property_meta) 
     print("Status:", status)
     print("Price: $"+  str(currency_number))
     print(" More pricing info: ", price_text)
+    print()
+    print("Description:")
+    print(descriptive_text)
+    print()
     print("Featured Image:")
     print(featured_image)
     print("Images to import:")
     for url in url_list:
         print(url)
-    print()
+    time.sleep(4)
