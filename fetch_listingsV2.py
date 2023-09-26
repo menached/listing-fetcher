@@ -25,7 +25,7 @@ def main():
 
 # iterate over each URL
     for url in urls:
-        print(f"\nFetching URL: {url}")
+        #print(f"\nFetching URL: {url}")
 
         # continue_prompt = input("Continue? (y/n): ")
         # if continue_prompt.lower() != "y":
@@ -370,9 +370,9 @@ def main():
         bathrooms = bathroom_matches[0].split()[0] if bathroom_matches else None  # Extracts the bathroom count component
 
         #split_meta("m2")
-        print("Area:", area)
-        print("Bedrooms:", bedrooms)
-        print("Bathrooms:", bathrooms)
+        # print("Area:", area)
+        # print("Bedrooms:", bedrooms)
+        # print("Bathrooms:", bathrooms)
 
 
         elements = comma_separated_list.split(',')
@@ -393,52 +393,159 @@ def main():
         #metastring = "105  sq. mtrs.2 Bedrooms2.5 Bathrooms"
         #split_meta("105  sq. mtrs.2 Bedrooms2.5 Bathrooms")
         #split_meta(metastring)
-        print()
+        #print()
         print("ID:", id)
-        print("Title:", title)
-        print("Category:", category)
-        print("Tags:", new_comma_separated_list)
-        print("metastring:", split_meta(short_description))
-        print("Area:", area)
-        print("Bedrooms:", bedrooms)
-        print("Bathrooms:", bathrooms)
+        # print("Title:", title)
+        # print("Category:", category)
+        # print("Tags:", new_comma_separated_list)
+        print("metastring:", propertysize(short_description))
+        #print("metastring:", analyze_short_description(short_description))
+        # print("Area:", area)
+        # print("Bedrooms:", bedrooms)
+        # print("Bathrooms:", bathrooms)
         print("Short Description:", short_description) 
         print()
-        print("Description:")
-        print(descriptive_text)
-        print()
-        print("Status:", status)
-        print("Price: $"+  str(currency_number))
-        print(" More pricing info: ", price_text)
-        print("1 Featured Image + ", imgcnt, " gallery images")
+        #print("Description:")
+        #print(descriptive_text)
+        #print()
+        #print("Status:", status)
+        #print("Price: $"+  str(currency_number))
+        #print(" More pricing info: ", price_text)
+        #print("1 Featured Image + ", imgcnt, " gallery images")
         #print(imgcnt + 1, " Images")
         #print(featured_image)
         #print("Gallery Images:")
         #for url in url_list:
             #print(url)
-        time.sleep(4)
+        time.sleep(.5)
 
-def split_meta(metastring):
-    #metastring = "TEST"
-    allthree = {}
-    # Using regular expressions to split the data
-    area_matches = re.findall(r'\d+(?:\.\d+)?\s*(?:sq\.?\s*m(?:et(?:er)?s?)?|m²|\bm²\b)', metastring)
-    area = area_matches[0].strip() if area_matches else None  # Extracts the area component
+def analyze_short_description(short_description):
+    bedrooms = re.findall(r'\b(\d)\s*Bedrooms', short_description)
+    bathrooms = re.findall(r'(\d)\s*(?=(?:\s*Bathrooms)|$)', short_description)
+    garage = re.findall(r'\b(\d)\s*Garage', short_description)
+    
+    if not bedrooms and not bathrooms and not garage:
+        return short_description
+    
+    result = ""
+    if bedrooms:
+        result += f"Bedrooms: {bedrooms[-1]}, "
+    if bathrooms:
+        result += f"Bathrooms: {bathrooms[-1]}, "
+    if garage:
+        result += f"Garage: {garage[-1]}, "
+    
+    return result.rstrip(", ")
 
-    bedroom_matches = re.findall(r'\d+\s*Bedrooms', metastring)
-    bedrooms = bedroom_matches[0].split()[0] if bedroom_matches else None  # Extracts the bedroom count component
 
-    bathroom_matches = re.findall(r'\d+(?:\.\d+)?\s*Bathrooms', metastring)
-    bathrooms = bathroom_matches[0].split()[0] if bathroom_matches else None  # Extracts the bathroom count component
+# def analyze_short_description(short_description):
+    # bedrooms = re.findall(r'\b(\d)\s*Bedrooms', short_description)
+    # bathrooms = re.findall(r'\b(\d)\s*Bathrooms', short_description)
+    # garage = re.findall(r'\b(\d)\s*Garage', short_description)
+    
+    # if not bedrooms and not bathrooms and not garage:
+        # return short_description
+    
+    # result = ""
+    # if bedrooms:
+        # result += f"Bedrooms: {bedrooms[-1]}, "
+    # if bathrooms:
+        # result += f"Bathrooms: {bathrooms[-1]}, "
+    # if garage:
+        # result += f"Garage: {garage[-1]}, "
+    
+    # return result.rstrip(", ")
 
-    allthree = (area, " ", bedrooms, " ",  bathrooms)
-    #print(metastring)
-    if "m2" in allthree:
-        allthree = "Case1 m2"
-    if "sq. mtrs." in allthree:
-        allthree = "Case2 sq. mtrs."
-    if "m²" in allthree:
-        allthree = "m²"
-    return allthree
+# def analyze_short_description(short_description):
+    # bedrooms = re.search(r'(\d+)\s*Bedrooms', short_description)
+    # bathrooms = re.search(r'(\d+)\s*Bathrooms', short_description)
+    # garage = re.search(r'(\d+)\s*Garage', short_description)
+    
+    # if not bedrooms and not bathrooms and not garage:
+        # return short_description
+    
+    # result = ""
+    # if bedrooms:
+        # result += f"Bedrooms: {bedrooms.group(1)}, "
+    # if bathrooms:
+        # result += f"Bathrooms: {bathrooms.group(1)}, "
+    # if garage:
+        # result += f"Garage: {garage.group(1)}, "
+    
+    # return result.rstrip(", ")
 
+
+
+def propertysize(metastring):
+    area_matches = metastring
+    #area = area_matches[0].strip() if area_matches else None  # Extracts the area component
+
+    # matches = re.findall(r"(.*?\s)\w{2}(?=\s*Bedrooms)", area_matches)
+    # matches = re.findall(r"(.*?)\w{2}(?=\s*Bedrooms)", area_matches)
+    # if matches:
+        # print("Before Bedrooms:", matches[0])
+    # else:
+        # print("No match found.")
+
+
+    # match area_matches:
+        # case "m2 - Property Size":
+            # sizesay = "Case1 m2 - Property Size"
+        # case "Sq Ft":
+            # sizesay = "Case2 Sq Ft"
+        # case "m2":
+            # sizesay = "Case3 m2"
+        # case "sq. meters":
+            # sizesay = "Case4 sq. meters"
+        # case "Lot Size":
+            # sizesay = "Case5 Lot Size"
+        # case "Mzn":
+            # sizesay = "Case6 Mzn"
+        # case "Sft House Size":
+            # sizesay = "Case7 Sft House Size"
+        # case "acres":
+            # sizesay = "Case8 acres"
+        # case "sq. mtrs.":
+            # sizesay = "Case9 sq. mtrs."
+        # case "m²":
+            # sizesay = "Case10 m²"
+        # case "Acres":
+            # sizesay = "Case11 Acres"
+        # case "sq. meter house":
+            # sizesay = "Case12 sq. meter house"
+        # case "manzanas":
+            # sizesay = "Case13 manzanas"
+        # case _:
+            # sizesay = "Case14 - none"
+    
+
+    if "m2 - Property Size" in area_matches:
+        sizesay = "Case1 m2 - Property Size"
+    elif "Sq Ft" in area_matches:
+        sizesay = "Case2 Sq Ft"
+    elif "m2" in area_matches:
+        sizesay = "Case3 m2"
+    elif "sq. meters" in area_matches:
+        sizesay = "Case4 sq. meters"
+    elif "Lot Size" in area_matches:
+        sizesay = "Case5 Lot Size"
+    elif "Mzn" in area_matches:
+        sizesay = "Case6 Mzn"
+    elif "Sft House Size" in area_matches:
+        sizesay = "Case7 Sft House Size"
+    elif "acres" in area_matches:
+        sizesay = "Case8 acres"
+    elif "sq. mtrs." in area_matches:
+        sizesay = "Case9 sq. mtrs."
+    elif "m²" in area_matches:
+        sizesay = "Case10 m²"
+    elif "Acres" in area_matches:
+        sizesay = "Case11 Acres"
+    elif "sq. meter house" in area_matches:
+        sizesay = "Case12 sq. meter house"
+    elif "manzanas" in area_matches:
+        sizesay = "Case13 manzanas"
+    else:
+        sizesay = "Case14 - none"
+    return sizesay
 main()
