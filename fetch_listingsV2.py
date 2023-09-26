@@ -35,12 +35,42 @@ for url in urls:
     # parse the HTML content of the page using Beautiful Soup
     soup = BeautifulSoup(response.text, 'html.parser')
     
+    # find the section with class "catItemBody"
+    printer_icon = soup.find('span', class_='printer-icon')
+    # remove the section if found
+    if  printer_icon:
+        printer_icon.extract()
+
+    
+    # Remove all <path> tags from the soup object
+    for path in soup.find_all('path'):
+        path.decompose()
+
+    # Remove all <svg> tags from the soup object
+    for svg in soup.find_all('svg'):
+        svg.decompose()
+    
+    for form in soup.find_all('form'):
+        form.decompose()
+    
+
+    # Updated soup object without <path> and <svg> tags
+    updated_html = str(soup)
+
+    # find the <path> tags and remove them along with their contents
+    path_tag = soup.find('path')
+    if path_tag:
+        path_tag.extract()
+    
     # remove script tags and their content
     for script in soup.find_all('script'):
         script.extract()
      # remove elements with id="footer-bottom"
     for footer_bottom in soup.find_all(id='footer-bottom'):
         footer_bottom.extract()
+    
+    for add_to_favorite in soup.find(id='add-to-favorite'):
+        add_to_favorite.extract()
     
     for more_options_wrapper in soup.find_all(class_='more-options-wrapper'):
         more_options_wrapper.extract()
@@ -74,10 +104,12 @@ for url in urls:
     if header_tag:
         header_tag.extract()
     
+    
     # find the <head> tag and remove it along with its contents
     head_tag = soup.find('head')
     if head_tag:
         head_tag.extract()
+    
     
     # find the section with class "listing-layout property-grid"
     listing_section = soup.find('section', class_='listing-layout property-grid')
@@ -91,6 +123,21 @@ for url in urls:
     if map_wrap:
         map_wrap.extract()
     
+    # find the section with class "map-wrap"
+    add_to_fav = soup.find('span', class_='add-to-fav')
+    # remove the section if found
+    if add_to_fav:
+        add_to_fav.extract()
+   
+
+# Find the span tag with class "printer-icon"
+    span_tag = soup.find('span', class_='printer-icon')
+
+# Check if the span tag exists and remove it
+    if span_tag:
+        span_tag.decompose()
+
+
     # find the section with class "agent-detail"
     agent_detail = soup.find('div', class_='agent-detail')
     # remove the section if found
@@ -105,10 +152,13 @@ for url in urls:
     
     # find the section with class "property-meta"
     property_meta = soup.find('div', class_='property-meta')
+    property_meta = property_meta.get_text(strip=True)
     # remove the section if found
-    if property_meta:
-        property_meta.extract()
-    
+    #if property_meta:
+    #    property_meta.extract()
+
+
+
     # find the section with class "page-head"
     page_head = soup.find('div', class_='page-head')
     # remove the section if found
@@ -139,12 +189,6 @@ for url in urls:
     if catItemBody:
         catItemBody.extract()
     
-    # find the section with class "catItemBody"
-    printer_icon = soup.find('span', class_='printer-icon')
-    # remove the section if found
-    if  printer_icon:
-        printer_icon.extract()
-
 
     style_tags = soup.find_all('style')
     # remove all content within <style> tags
@@ -229,31 +273,37 @@ for url in urls:
     # Get the cleaned price text
     price_text = price.get_text().strip()
 
+    match = re.search(r'\$\d+(?:,\d+)*(?:\.\d+)?', price_text)
+    if match:
+        currency_number = int(re.sub(r'[^\d]', '', match.group()))
+
+
 
     category_tag = price.find('small')
     category = category_tag.get_text().replace('- ', '') if category_tag else ''
 
 
+
+
+
+
     # display the fetched HTML content
-    #print("\nFetched HTML Content:")
-    #print(soup.prettify())
+    print("\nFetched HTML Content:")
+    print(soup.prettify())
 #   
    # print("Desc:")
    # print(full_text)
     print()
     print("Property ID:", title_text)
-    print()
     print("Category:", category)
-    print()
     print("Listing Tags:", comma_separated_list)
-    print()
-    print("Price:", price_text)
-    print()
+    print("Details:", property_meta) 
     print("Status:", status)
-    print()
+    print("Price: $"+  str(currency_number))
+    print(" More pricing info: ", price_text)
     print("Featured Image:")
     print(featured_image)
-    print()
     print("Images to import:")
     for url in url_list:
         print(url)
+    print()
