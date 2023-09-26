@@ -176,11 +176,11 @@ for url in urls:
         header_wrapper.extract()
     
     # find the section with class "property-meta"
-    property_meta = soup.find('div', class_='property-meta')
-    property_meta = property_meta.get_text(strip=True)
+    short_description = soup.find('div', class_='property-meta')
+    short_description = short_description.get_text(strip=True)
     # remove the section if found
-    #if property_meta:
-    #    property_meta.extract()
+    #if short_description:
+    #    short_description.extract()
 
     descriptive_text = soup.find("div", class_="content clearfix").get_text()
     descriptive_text = descriptive_text.replace("Check Our Facebook Page!", "")
@@ -244,6 +244,7 @@ for url in urls:
     for a_tag in a_tags:
         url = a_tag.get('href')
         url_list.append(url)
+    imgcnt = len(url_list)
 
 
     # find the <img> tag within the <div> element
@@ -316,28 +317,94 @@ for url in urls:
     #print(description)
 
 
+
+    lines = descriptive_text.splitlines()
+
+    # Filter out blank lines using a list comprehension
+    non_blank_lines = [line for line in lines if line.strip()]
+
+    # Join the non-blank lines back into a string
+    filtered_description = '\n'.join(non_blank_lines)
+
+    # Print the filtered description
+    #print(filtered_description)
+    descriptive_text = filtered_description
+
+
+# # Using regular expressions to split the data
+    # area_matches = re.findall(r'\d+(?:\.\d+)?\s*(?:sq\.?\s*m(?:et(?:er)?s?)?|m²)', short_description)
+    # area = area_matches[0].strip() if area_matches else None  # Extracts the area component
+
+    # bedroom_matches = re.findall(r'\d+\s*Bedrooms', short_description)
+    # bedrooms = bedroom_matches[0].split()[0] if bedroom_matches else None  # Extracts the bedroom count component
+
+    # bathroom_matches = re.findall(r'\d+(?:\.\d+)?\s*Bathrooms', short_description)
+    # bathrooms = bathroom_matches[0].split()[0] if bathroom_matches else None  # Extracts the bathroom count component
+
+
+# # Using regular expressions to split the data
+    # area_matches = re.findall(r'\d+(?:\.\d+)?\s*(?:sq\.?\s*m(?:et(?:er)?s?)?|m²|\bm²\b)', short_description)
+    # area = area_matches[0].strip() if area_matches else None  # Extracts the area component
+
+    # bedroom_matches = re.findall(r'\d+\s*Bedrooms', short_description)
+    # bedrooms = bedroom_matches[0].split()[0] if bedroom_matches else None  # Extracts the bedroom count component
+
+    # bathroom_matches = re.findall(r'\d+(?:\.\d+)?\s*Bathrooms', short_description)
+    # bathrooms = bathroom_matches[0].split()[0] if bathroom_matches else None  # Extracts the bathroom count component
+
+    # print("Area:", area)
+    # print("Bedrooms:", bedrooms)
+    # print("Bathrooms:", bathrooms)
+
+# Using regular expressions to split the data
+    area_matches = re.findall(r'\d+(?:\.\d+)?\s*(?:sq\.?\s*m(?:et(?:er)?s?)?|m²|\bm²\b)', short_description)
+    area = area_matches[0].strip() if area_matches else None  # Extracts the area component
+
+    bedroom_matches = re.findall(r'\b\d+\s*Bedrooms', short_description)
+    bedrooms = bedroom_matches[0].split()[0] if bedroom_matches else None  # Extracts the bedroom count component
+
+    bathroom_matches = re.findall(r'\d+(?:\.\d+)?\s*Bathrooms', short_description)
+    bathrooms = bathroom_matches[0].split()[0] if bathroom_matches else None  # Extracts the bathroom count component
+
+    print("Area:", area)
+    print("Bedrooms:", bedrooms)
+    print("Bathrooms:", bathrooms)
+
+
+    elements = comma_separated_list.split(',')
+    elements = [element for element in elements if element not in ('Inside')]
+    new_comma_separated_list = ','.join(elements)
+    
+    elements = new_comma_separated_list.split(',')
+    elements = [element for element in elements if element not in ('Outside')]
+    new_comma_separated_list = ','.join(elements)
+
     # display the fetched HTML content
-    print("\nFetched HTML Content:")
-    print(soup2.prettify())
+    #print("\nFetched HTML Content:")
+    #print(soup2.prettify())
 #   
    # print("Desc:")
    # print(full_text)
     print()
-    print("Property ID:", id)
+    print("ID:", id)
     print("Title:", title)
     print("Category:", category)
-    print("Listing Tags:", comma_separated_list)
-    print("Details:", property_meta) 
-    print("Status:", status)
-    print("Price: $"+  str(currency_number))
-    print(" More pricing info: ", price_text)
+    print("Tags:", new_comma_separated_list)
+    print("Area:", area)
+    print("Bedrooms:", bedrooms)
+    print("Bathrooms:", bathrooms)
+    print("Short Description:", short_description) 
     print()
     print("Description:")
     print(descriptive_text)
     print()
-    print("Featured Image:")
-    print(featured_image)
-    print("Images to import:")
-    for url in url_list:
-        print(url)
+    print("Status:", status)
+    print("Price: $"+  str(currency_number))
+    print(" More pricing info: ", price_text)
+    print("1 Featured Image + ", imgcnt, " gallery images")
+    #print(imgcnt + 1, " Images")
+    #print(featured_image)
+    #print("Gallery Images:")
+    #for url in url_list:
+        #print(url)
     time.sleep(4)
